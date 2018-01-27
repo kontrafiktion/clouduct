@@ -1,0 +1,9 @@
+
+#compdef clouduct
+_clouduct() {
+  eval $(env COMMANDLINE="${words[1,$CURRENT]}" _CLOUDUCT_COMPLETE=complete-zsh  clouduct)
+}
+if [[ "$(basename ${(%):-%x})" != "_clouduct" ]]; then
+  autoload -U compinit && compinit
+  compdef _clouduct clouduct
+fi

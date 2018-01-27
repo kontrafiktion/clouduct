@@ -1,0 +1,67 @@
+#!/usr/bin/env python
+
+"""Command Line Interface for 'clouduct'."""
+
+import boto3
+import click
+import click_completion
+import clouduct
+
+click_completion.init()
+
+
+profiles = boto3.session.Session().available_profiles
+
+template_names = ["blah-1.0", "foo-1.0"]
+# templates = json.load(open("templates.json"))
+# template_names = [template["name"] + "-" + template["version"] for template in templates]
+
+environments = ["dev", "test", "prod"]
+
+
+@click.group(help)
+def completion():
+    """Needed for click_completion."""
+    pass
+
+
+@completion.command()
+# @click.option('--execute', is_flag=True,
+#               help='clouduct will only show the execution plan unless you give this flag')
+@click.option('--profile', type=click.Choice(profiles),
+              help='One of your locally configured AWS profiles (see'
+                   ' https://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html)')
+@click.option('--template', type=click.Choice(template_names),
+              help='The template your new project will be based on'
+                   ' (see https://clouduct.org/templates.html)')
+# @click.option('--templates_config',
+#   help='A URL where that returns a list of templates (either as text or as application/json)')
+@click.option('--tag', 'tags', multiple=True, metavar='<key>:<value>',
+              help='Tag for the created resources: <key>:<value> (can be provided multiple times)')
+@click.option('--env', default='dev', type=click.Choice(environments),
+              help='Default: "dev".\n'
+                   'The kind of environment you want to create (used for naming and tagging). Some'
+                   ' templates create different kind/sizes of resources based on this parameter'
+                   ' (if you are not sure, do not set this param)')
+@click.argument('name')
+def create(name, profile, template, tags, env):
+    """Generate an initial project on AWS based on a template.
+
+    The CodeCommit repo will be named NAME and all other resources will contain
+    NAME as well to be easily identifiable.
+    """
+    if profile:
+        print("profile:", profile)
+
+    print("env:", env)
+    clouduct.generate(name, profile, template, tags, env)
+
+
+def verify_prerequisites():
+    """Check for terraform."""
+    pass
+
+
+if __name__ == '__main__':
+    verify_prerequisites()
+    create()

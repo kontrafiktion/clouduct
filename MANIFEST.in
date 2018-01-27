@@ -1,0 +1,5 @@
+recursive-include clouduct *.py
+include LICENSE
+include requirements.txt
+include completion/*
+include bin/*
