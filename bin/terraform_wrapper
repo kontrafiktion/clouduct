@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+set -e
+
+# ensure we're executing in the correct directory
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+cd "${SCRIPT_DIR}"
+
+if [ "$#" -ne 2 ] || ! [ -d "$1" ]; then
+  echo "Usage: $0 DIRECTORY COMMAND" >&2
+  exit 1
+fi
+
+target_path=$1
+terraform_command=$2
+
+if [ ! -d "$target_path" ]; then
+  echo "Folder $target_path doesn't exist" >&2
+  exit 1
+fi
+
+
+# export common Terraform variables
+export remote_state_bucket=vivo-terraform-state
+export region=eu-west-1
+
+cd "${target_path}"
+
+# remove slashes
+# state_path=$(echo "$target_path" | sed 's/\/*$//g')
+state_path="$target_path"
+state="${state_path}/terraform.tfstate"
+
+environment=$(echo "$state_path" | cut -d "/" -f 1)
+
+#Destroy without confirmation
+if [[ "${terraform_command}" ==  'destroy' ]]; then
+  terraform_command='destroy -force'
+fi
+
+terraform get
+
+if [[ "${terraform_command}" ==  'init' ]]; then
+  terraform init \
+      -backend-config "bucket=${remote_state_bucket}" \
+      -backend-config "key=${state}" \
+      -backend-config "region=${region}"
+
+else
+  terraform "${terraform_command}" \
+      -var "remote_state_bucket=${remote_state_bucket}" \
+      -var "region=${region}" \
+      -var "environment=${environment}" \
+      -var "state_path=${state_path}" \
+      -var "state=${state}"
+fi
