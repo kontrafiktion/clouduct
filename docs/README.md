@@ -78,8 +78,8 @@ you to easily switch between different AWS accounts. But it is not necessary
 [CodeStar]: https://aws.amazon.com/codestar/
 [codestar-extend]: https://docs.aws.amazon.com/codestar/latest/userguide/how-to-change-project.html
 [CloudFormation]: https://aws.amazon.com/cloudformation/
-[clouduct-start]: clouduct-cropped.001.png "Starting Simple"
-[clouduct-grow]: clouduct-cropped.002.png "Grow your environment"
+[clouduct-start]: clouduct-cropped-small.001.png "Starting Simple"
+[clouduct-grow]: clouduct-cropped-small.002.png "Grow your environment"
 [aws-named-profiles]: https://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html
 [Terraform]: https://www.terraform.io/
 [venv]: https://docs.python.org/3/library/venv.html
